@@ -1,0 +1,181 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
+    title How Not to Node (In Production)
+
+    link(rel='stylesheet', type='text/css', href='build/build.css')
+
+  body
+
+    article
+
+      section
+        h1.bullet How Not to Node 
+          span.bullet (In Production)
+
+      section
+        h2.bullet Who are we?
+        ul
+          li <img src="images/careerlounge.jpg" width="320" height="66">
+          li <img src="images/comet.png" width="200" height="40">
+
+      section
+        h2.bullet What do we do?
+        p.bullet Events, at the moment.
+        ul
+          li <img src="images/traffic-sep.png">
+          li <img src="images/traffic-melbuni.png">
+
+      section
+        h2.bullet Wow! Node!
+        pre.bullet
+          code.language-javascript.
+            node comet.js
+        p.bullet ...
+          span.bullet Oops!
+        pre.bullet
+          code.language-javascript.
+            node comet.js &
+
+      section
+        h2.bullet What about dev?
+        pre.bullet
+          code.language-javascript.
+            sudo killall node && node comet.js &
+
+        p.bullet So much anger. :(
+
+      section
+        h2.bullet nodemon
+        pre.bullet
+          code.language-javascript.
+            nodemon -e ".js|.sql|.html" -w . comet.js
+
+        p.bullet Still there, to this day. :o
+
+      section
+        h2.bullet And then?
+        pre.bullet
+          code.language-javascript.
+            grunt server
+
+        p.bullet Yes, of course this would now be
+          br
+          em `gulp serve`
+
+      section
+        h2.bullet Back to Production
+        ul
+          li nodemon doesn't work
+          li Look at system tools?
+          li init!
+
+      section
+        h2.bullet init
+        pre.bullet(style='width: 80%; font-size: 33.333%')
+          code.language-javascript.
+            1    #!upstart
+            2    description "Comet API beta server 0.1"
+            3    author      "sysadmin@careerlounge.com.au"
+            4 
+            5    start on startup
+            6    stop on shutdown
+            7 
+            8    setuid www-data
+            9    setgid www-data
+            10   
+            11   script
+            12     export HOME="/home/ubuntu"
+            13     export APPDIR="${HOME}/comet-cl-api"
+            14     export NODE_ENV="demo"
+            15     export NODE_PATH=$APPDIR
+            16
+            17     chdir $APPDIR
+            18     echo $$ > /var/run/comet.pid
+            19     exec sudo -u root /usr/bin/node /home/ubuntu/comet-cl-api/comet.js >> /var/log/comet.sys.log 2>&1
+            20 end script
+            21
+            22 pre-start script
+            23     # Date format same as (new Date()).toISOString() for consistency
+            24     echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Starting" >> /var/log/comet.sys.log
+            25 end script
+            26
+            27 pre-stop script
+            28     rm /var/run/comet.pid
+            29     echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Stopping" >> /var/log/comet.sys.log
+            30 end script
+
+        p.bullet Largely works. Sort of. Kind of.
+
+      section
+        h2.bullet What about scaling?
+        ul
+          li CLOUD
+          li Yes, cloud.
+          li "Toy port" to AWS
+          li Prod 2 days later
+
+      section
+        h2.bullet Actual AWS<super>*</super>
+        ul
+          li Elastic Beanstalk
+          li Opsware
+          li Autoscaling
+        pre.bullet
+          code.language-javascript.
+            git push
+        h1.bullet Huzzah!
+
+      section
+        h2.bullet Unfortunately
+        img.bullet(src='images/aws.png', style='width:80%;')
+
+      section
+        h2.bullet Back to dev? 
+        img.bullet(src='images/lolno.gif')
+
+      section
+        h2.bullet And then?
+        ul
+          li ...
+          li ...
+          li ...
+          li Docker?
+
+      section
+        h2 Docker
+        img.bullet(src='images/docker.png', width='240')
+        ul
+          li Best logo I've seen in <em>ages</em>
+          li It's trendy. 
+            span.bullet Right? 
+            span.bullet Is it still trendy?
+          li Seems legit
+          li In all seriousness, it seems promising and well supported...
+          li By MULTIPLE cloud providers. This is key.
+
+      section
+        h2 Options?
+        ul
+          li Perhaps not a huge number
+          li "Canned magic" hosting 
+            strong.bullet ($$$$$)
+          li Opsware 
+            span.bullet (More manual)
+          li <a href="https://github.com/Unitech/pm2">PM2</a> + something? 
+            span.bullet (Feels like it's trying to do too much)
+
+      section
+        h2 Anyone?
+        img(src='images/uncle-sam.jpg', width='240')
+
+      section
+        h2.bullet Complaints
+        br
+        img(src='images/me.jpg', width='80')
+        p
+          a(href='http://twitter.com/jaylynch')  @jaylynch
+
+    script(src='build/build.js')

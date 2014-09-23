@@ -1,0 +1,7 @@
+{
+  "name": "presentation-how-not-to-node-in-production",
+  "version": "0.0.0",
+  "dependencies": {
+    "prism": "gh-pages"
+  }
+}
