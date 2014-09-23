@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>How Not to Node (In Production)</title>
+    <link rel="stylesheet" type="text/css" href="build/build.css">
+  </head>
+  <body>
+    <article>
+      <section>
+        <h1 class="bullet">How Not to Node <span class="bullet">(In Production)</span></h1>
+      </section>
+      <section>
+        <h2 class="bullet">Who are we?</h2>
+        <ul>
+          <li><img src="images/careerlounge.jpg" width="320" height="66"></li>
+          <li><img src="images/comet.png" width="200" height="40"></li>
+        </ul>
+      </section>
+      <section>
+        <h2 class="bullet">What do we do?</h2>
+        <p class="bullet">Events, at the moment.</p>
+        <ul>
+          <li><img src="images/traffic-sep.png"></li>
+          <li><img src="images/traffic-melbuni.png"></li>
+        </ul>
+      </section>
+      <section>
+        <h2 class="bullet">Wow! Node!</h2>
+        <pre class="bullet"><code class="language-javascript">node comet.js</code></pre>
+        <p class="bullet">...<span class="bullet">Oops!</span></p>
+        <pre class="bullet"><code class="language-javascript">node comet.js &
+</code></pre>
+      </section>
+      <section>
+        <h2 class="bullet">What about dev?</h2>
+        <pre class="bullet"><code class="language-javascript">sudo killall node && node comet.js &
+</code></pre>
+        <p class="bullet">So much anger. :(</p>
+      </section>
+      <section>
+        <h2 class="bullet">nodemon</h2>
+        <pre class="bullet"><code class="language-javascript">nodemon -e ".js|.sql|.html" -w . comet.js
+</code></pre>
+        <p class="bullet">Still there, to this day. :o</p>
+      </section>
+      <section>
+        <h2 class="bullet">And then?</h2>
+        <pre class="bullet"><code class="language-javascript">grunt server
+</code></pre>
+        <p class="bullet">Yes, of course this would now be<br><em>`gulp serve`</em></p>
+      </section>
+      <section>
+        <h2 class="bullet">Back to Production</h2>
+        <ul>
+          <li>nodemon doesn't work</li>
+          <li>Look at system tools?</li>
+          <li>init!</li>
+        </ul>
+      </section>
+      <section>
+        <h2 class="bullet">init</h2>
+        <pre style="width: 80%; font-size: 33.333%" class="bullet"><code class="language-javascript">1    #!upstart
+2    description "Comet API beta server 0.1"
+3    author      "sysadmin@careerlounge.com.au"
+4 
+5    start on startup
+6    stop on shutdown
+7 
+8    setuid www-data
+9    setgid www-data
+10   
+11   script
+12     export HOME="/home/ubuntu"
+13     export APPDIR="${HOME}/comet-cl-api"
+14     export NODE_ENV="demo"
+15     export NODE_PATH=$APPDIR
+16
+17     chdir $APPDIR
+18     echo $$ > /var/run/comet.pid
+19     exec sudo -u root /usr/bin/node /home/ubuntu/comet-cl-api/comet.js >> /var/log/comet.sys.log 2>&1
+20 end script
+21
+22 pre-start script
+23     # Date format same as (new Date()).toISOString() for consistency
+24     echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Starting" >> /var/log/comet.sys.log
+25 end script
+26
+27 pre-stop script
+28     rm /var/run/comet.pid
+29     echo "[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Stopping" >> /var/log/comet.sys.log
+30 end script
+</code></pre>
+        <p class="bullet">Largely works. Sort of. Kind of.</p>
+      </section>
+      <section>
+        <h2 class="bullet">What about scaling?</h2>
+        <ul>
+          <li>CLOUD</li>
+          <li>Yes, cloud.</li>
+          <li>"Toy port" to AWS</li>
+          <li>Prod 2 days later</li>
+        </ul>
+      </section>
+      <section>
+        <h2 class="bullet">Actual AWS<super>*</super></h2>
+        <ul>
+          <li>Elastic Beanstalk</li>
+          <li>Opsware</li>
+          <li>Autoscaling</li>
+        </ul>
+        <pre class="bullet"><code class="language-javascript">git push</code></pre>
+        <h1 class="bullet">Huzzah!</h1>
+      </section>
+      <section>
+        <h2 class="bullet">Unfortunately</h2><img src="images/aws.png" style="width:80%;" class="bullet">
+      </section>
+      <section>
+        <h2 class="bullet">Back to dev? </h2><img src="images/lolno.gif" class="bullet">
+      </section>
+      <section>
+        <h2 class="bullet">And then?</h2>
+        <ul>
+          <li>...</li>
+          <li>...</li>
+          <li>...</li>
+          <li>Docker?</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Docker</h2><img src="images/docker.png" width="240" class="bullet">
+        <ul>
+          <li>Best logo I've seen in <em>ages</em></li>
+          <li>It's trendy. <span class="bullet">Right? </span><span class="bullet">Is it still trendy?</span></li>
+          <li>Seems legit</li>
+          <li>In all seriousness, it seems promising and well supported...</li>
+          <li>By MULTIPLE cloud providers. This is key.</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Options?</h2>
+        <ul>
+          <li>Perhaps not a huge number</li>
+          <li>"Canned magic" hosting <strong class="bullet">($$$$$)</strong></li>
+          <li>Opsware <span class="bullet">(More manual)</span></li>
+          <li><a href="https://github.com/Unitech/pm2">PM2</a> + something? <span class="bullet">(Feels like it's trying to do too much)</span></li>
+        </ul>
+      </section>
+      <section>
+        <h2>Anyone?</h2><img src="images/uncle-sam.jpg" width="240">
+      </section>
+      <section>
+        <h2 class="bullet">Complaints</h2><br><img src="images/me.jpg" width="80">
+        <p><a href="http://twitter.com/jaylynch"> @jaylynch</a></p>
+      </section>
+    </article>
+    <script src="build/build.js"></script>
+  </body>
+</html>
